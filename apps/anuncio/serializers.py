@@ -35,10 +35,10 @@ class AnuncioSerializer(serializers.ModelSerializer):
         'precio_inicial',
         'imagen',
         'fecha_inicio',
-        'fecha_fin'
+        'fecha_fin',
         'activo',
         'categorias',
         'publicado_por',
         'oferta_ganadora'
         ]
-        read_only_fields = ['publicado_por', 'oferta_ganadora']
+        # read_only_fields = ['publicado_por', 'oferta_ganadora']

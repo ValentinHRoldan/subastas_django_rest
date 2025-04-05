@@ -2,8 +2,8 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .models import Categoria
-from .serializers import CategoriaSerializer
+from .models import Categoria, Anuncio
+from .serializers import CategoriaSerializer, AnuncioSerializer
 
 class CategoriaListaAPIView(APIView):
     def get(self, request, format=None):
@@ -36,3 +36,17 @@ class CategoriaDetalleAPIView(APIView):
         categoria = get_object_or_404(Categoria, pk=pk)
         categoria.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+class AnuncioListaAPIView(APIView):
+    def get(self, request):
+        anuncios = Anuncio.objects.all()
+        serializer = AnuncioSerializer(anuncios, many=True)
+        return Response(serializer.data)  
+
+    def post(self, request):
+        serializer = AnuncioSerializer(data=request.data)
+        if not(serializer.is_valid()):
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+                  

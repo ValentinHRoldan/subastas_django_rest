@@ -15,7 +15,7 @@ class Anuncio(models.Model):
     titulo = models.CharField(max_length=200)
     descripcion = models.TextField(blank=True)
     precio_inicial = models.DecimalField(decimal_places=2, max_digits=10)
-    imagen = models.FileField(blank=True)
+    imagen = models.FileField(blank=True, null=True)
     fecha_publicacion = models.DateTimeField(auto_now_add=True)
     fecha_inicio = models.DateTimeField(default=timezone.now)
     fecha_fin = models.DateTimeField(blank=True, null=True)
