@@ -41,4 +41,4 @@ class AnuncioSerializer(serializers.ModelSerializer):
         'publicado_por',
         'oferta_ganadora'
         ]
-        # read_only_fields = ['publicado_por', 'oferta_ganadora']
+        read_only_fields = ['publicado_por', 'oferta_ganadora']

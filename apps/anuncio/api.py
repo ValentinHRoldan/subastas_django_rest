@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import Categoria, Anuncio
 from .serializers import CategoriaSerializer, AnuncioSerializer
+from apps.usuario.models import Usuario
 
 class CategoriaListaAPIView(APIView):
     def get(self, request, format=None):
@@ -47,7 +48,9 @@ class AnuncioListaAPIView(APIView):
         serializer = AnuncioSerializer(data=request.data)
         if not(serializer.is_valid()):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        serializer.save()
+        #simulacion del usuario autenticado
+        fakeUser = Usuario.objects.get(id = 1)
+        serializer.save(publicado_por=fakeUser)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class AnuncioDetalleAPIView(APIView):
