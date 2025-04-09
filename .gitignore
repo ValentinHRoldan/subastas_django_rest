@@ -3,3 +3,4 @@ media/
 staticfiles/
 static_root/
 tmp/
+**/__pycache__/
