@@ -105,9 +105,17 @@ class AnuncioDetalleGenericView(RetrieveUpdateDestroyAPIView):
     queryset = Anuncio.objects.all()
     serializer_class = AnuncioSerializer
 
+class AnuncioDetalleGenericView(RetrieveUpdateDestroyAPIView):
+    queryset = Anuncio.objects.all()
+    serializer_class = AnuncioSerializer
+
 class AnuncioViewSet(viewsets.ModelViewSet):
     queryset = Anuncio.objects.all()
     serializer_class = AnuncioSerializer
+
+    def perform_create(self, serializer):
+        fakeUser = Usuario.objects.get(id = 1)
+        serializer.save(publicado_por=fakeUser)
 
     @action(detail=True, methods=['get'])
     def tiempo_restante(self, request, pk=None):
