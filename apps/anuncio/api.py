@@ -97,6 +97,9 @@ class AnuncioDetalleAPIView(APIView):
 class AnuncioListaGenericView(ListCreateAPIView):
     queryset = Anuncio.objects.all()
     serializer_class = AnuncioSerializer
+    def perform_create(self, serializer):
+        fakeUser = Usuario.objects.get(id = 1)
+        serializer.save(publicado_por=fakeUser)
 
 class AnuncioDetalleGenericView(RetrieveUpdateDestroyAPIView):
     queryset = Anuncio.objects.all()

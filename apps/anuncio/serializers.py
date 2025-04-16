@@ -7,7 +7,6 @@ class CategoriaSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'nombre',
-            'activa',
         ] 
     # def create(self, validated_data):
     #     categorias_data = validated_data.pop('categorias')
@@ -26,19 +25,31 @@ class CategoriaSerializer(serializers.ModelSerializer):
     #     return anuncio
 
 class AnuncioSerializer(serializers.ModelSerializer):
+    categorias = CategoriaSerializer(many=True, read_only=True)
+    categorias_ids = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=Categoria.objects.all(), write_only=True
+    )
+
     class Meta:
         model = Anuncio
         fields = [
-        'id',
-        'titulo',
-        'descripcion',
-        'precio_inicial',
-        'imagen',
-        'fecha_inicio',
-        'fecha_fin',
-        'activo',
-        'categorias',
-        'publicado_por',
-        'oferta_ganadora'
+            'id',
+            'titulo',
+            'descripcion',
+            'precio_inicial',
+            'imagen',
+            'fecha_inicio',
+            'fecha_fin',
+            'activo',
+            'categorias',      
+            'categorias_ids',  
+            'publicado_por',
+            'oferta_ganadora',
         ]
-        read_only_fields = ['oferta_ganadora']
+        read_only_fields = ['publicado_por', 'oferta_ganadora']
+
+    def create(self, validated_data):
+        categorias = validated_data.pop('categorias_ids', [])
+        anuncio = Anuncio.objects.create(**validated_data)
+        anuncio.categorias.set(categorias)
+        return anuncio
