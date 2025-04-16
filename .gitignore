@@ -4,3 +4,4 @@ staticfiles/
 static_root/
 tmp/
 **/__pycache__/
+/__pycache__/
