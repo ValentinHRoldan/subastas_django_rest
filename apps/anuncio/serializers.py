@@ -1,5 +1,8 @@
 from rest_framework import serializers
 from .models import Categoria, Anuncio
+from django.utils import timezone
+from rest_framework.exceptions import ValidationError
+from datetime import timedelta
 
 class CategoriaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -53,3 +56,40 @@ class AnuncioSerializer(serializers.ModelSerializer):
         anuncio = Anuncio.objects.create(**validated_data)
         anuncio.categorias.set(categorias)
         return anuncio
+    
+    # def generarError(self, mensaje):
+    #     raise serializers.ValidationError({
+    #         'info': mensaje
+    #     })
+
+    # def validate_fecha_inicio(self, value):
+    #     if value < timezone.now():
+    #         self.generarError('la fecha no puede ser anterior a la actual')
+    #     return value
+    
+    def errorMessage(self, info):
+        return {
+            'info': info
+        }
+
+    def validate(self,data):
+        errors = {}
+        fecha_maxima = timezone.now() + timedelta(days=30) # fecha maxima establecida a 30 dias
+        duracion = data['fecha_fin'] - data['fecha_inicio']
+        duracion_maxima = timedelta(days=30 * 2)
+        if data['fecha_inicio'] < timezone.now():
+            errors['fecha_inicio'] = self.errorMessage('La fecha no puede ser anterior a la actual.')
+
+        if data['fecha_fin'] < data['fecha_inicio']:
+            errors['fecha_fin'] = self.errorMessage('La fecha no puede ser anterior a la fecha de inicio')
+
+        if data['fecha_inicio'] > fecha_maxima:
+            errors['fecha_fin'] = self.errorMessage('La fecha de inicio no puede ser mayor a 30 dias desde ahora')
+
+        if duracion > duracion_maxima:
+            errors['Subasta'] = self.errorMessage('La duracion de la subasta no debe superar los 60 dias')
+            
+        if errors:
+            raise serializers.ValidationError(errors)
+        return data
+    

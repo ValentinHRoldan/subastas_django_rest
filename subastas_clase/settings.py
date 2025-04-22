@@ -39,12 +39,21 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'apps.usuario',
     'apps.anuncio',
-    'rest_framework'
+    'rest_framework',
+    'django_filters'
 ]
 REST_FRAMEWORK = {
-'DEFAULT_RENDERER_CLASSES': [
-'rest_framework.renderers.JSONRenderer',
-'rest_framework.renderers.BrowsableAPIRenderer'],
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer'
+    ],
+    'EXCEPTION_HANDLER': 'apps.anuncio.utils.custom_exception_handler',
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend'
+    ],
+    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.QueryParameterVersioning',
+    'VERSION_PARAM': 'version',
+    'ALLOWED_VERSION': ['1','2'],
 }
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
