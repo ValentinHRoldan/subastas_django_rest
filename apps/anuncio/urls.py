@@ -1,14 +1,8 @@
-from django.urls import path
-from .api import AnuncioDetalleGenericView, AnuncioListaGenericView, CategoriaDetalleGenericView, CategoriaListaAPIView, CategoriaDetalleAPIView, AnuncioListaAPIView, AnuncioDetalleAPIView, CategoriaListaGenericView
-
+from django.urls import path, re_path, include
+from .views import register, login
 app_name = 'anuncio'
 urlpatterns = [
-    path('api/categoria/', CategoriaListaAPIView.as_view()),
-    path('api/categoria/<pk>/', CategoriaDetalleAPIView.as_view()),
-    path('api/anuncio/', AnuncioListaAPIView.as_view()),
-    path('api/anuncio/<pk>/', AnuncioDetalleAPIView.as_view()),
-    path('generic-view/categoria/', CategoriaListaGenericView.as_view()),
-    path('generic-view/categoria/<int:pk>/', CategoriaDetalleGenericView.as_view()),
-    path('generic-view/anuncio/', AnuncioListaGenericView.as_view()),
-    path('generic-view/anuncio/<int:pk>/', AnuncioDetalleGenericView.as_view()),
+    re_path('register', register),
+    re_path('login', login),
+    path('api-auth/', include('rest_framework.urls'))
 ]

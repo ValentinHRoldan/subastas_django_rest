@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'apps.usuario',
     'apps.anuncio',
     'rest_framework',
-    'django_filters'
+    'django_filters',
+    'rest_framework.authtoken'
 ]
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
@@ -54,6 +55,10 @@ REST_FRAMEWORK = {
     'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.QueryParameterVersioning',
     'VERSION_PARAM': 'version',
     'ALLOWED_VERSION': ['1','2'],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication', 
+        'rest_framework.authentication.SessionAuthentication',  
+    ),
 }
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

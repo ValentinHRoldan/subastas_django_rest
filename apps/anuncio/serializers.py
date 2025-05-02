@@ -3,6 +3,7 @@ from .models import Categoria, Anuncio
 from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 from datetime import timedelta
+from apps.usuario.models import Usuario
 
 class CategoriaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -93,3 +94,7 @@ class AnuncioSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(errors)
         return data
     
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Usuario
+        fields = ['id', 'username', 'email', 'password', 'documento_identidad', 'domicilio']
