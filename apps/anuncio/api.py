@@ -43,8 +43,8 @@ class AnuncioViewSet(viewsets.ModelViewSet):
     ordering_fields = ['titulo', 'fecha_fin', 'precio_inicial', 'fecha_publicacion']
 
     def perform_create(self, serializer):
-        fakeUser = Usuario.objects.get(id = 1)
-        serializer.save(publicado_por=fakeUser)
+        usuario = self.request.user
+        serializer.save(publicado_por=usuario)
 
     @action(detail=True, methods=['get'])
     def tiempo_restante(self, request, pk=None):

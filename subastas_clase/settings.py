@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'apps.anuncio',
     'rest_framework',
     'django_filters',
-    'rest_framework.authtoken'
+    'rest_framework.authtoken',
+    'drf_spectacular'
 ]
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
@@ -59,6 +60,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication', 
         'rest_framework.authentication.SessionAuthentication',  
     ),
+    
 }
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
