@@ -10,7 +10,7 @@ import datetime
 from django_filters.rest_framework import DjangoFilterBackend
 from .filters import CategoriaFilter
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions
 
 class CategoriaViewSet(viewsets.ModelViewSet):
     queryset = Categoria.objects.all()
@@ -30,8 +30,9 @@ class CategoriaViewSet(viewsets.ModelViewSet):
         return super().list(request, *args, **kwargs)
 
 class AnuncioViewSet(viewsets.ModelViewSet):
+    queryset = Anuncio.objects.all()
     authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, DjangoModelPermissions]
     queryset = Anuncio.objects.all()
     serializer_class = AnuncioSerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
@@ -65,4 +66,33 @@ class AnuncioViewSet(viewsets.ModelViewSet):
         if version == "1":
             return Response({"mensaje": f"Estas en una version vieja: version {version}"})
         return super().list(request, *args, **kwargs)
-# ---------------------------------------------------
+
+    def destroy(self, request, *args, **kwargs):
+        anuncio = self.get_object()
+        if anuncio.publicado_por != request.user:
+            return Response({'detail': 'No tienes permiso para eliminar este anuncio.'},
+                            status=status.HTTP_403_FORBIDDEN)
+        return super().destroy(request, *args, **kwargs)
+    
+    def update(self, request, *args, **kwargs):
+        anuncio = self.get_object()
+        if anuncio.publicado_por != request.user:
+            return Response({'detail': 'No tienes permiso para actualizar este anuncio.'},
+                            status=status.HTTP_403_FORBIDDEN)
+        return super().update(request, *args, **kwargs)
+
+    def partial_update(self, request, *args, **kwargs):
+        anuncio = self.get_object()
+        if anuncio.publicado_por != request.user:
+            return Response({'detail': 'No tienes permiso para modificar este anuncio.'},
+                            status=status.HTTP_403_FORBIDDEN)
+        return super().partial_update(request, *args, **kwargs)
+
+class MisAnunciosAPIView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        anuncios = Anuncio.objects.filter(publicado_por=request.user)
+        serializer = AnuncioSerializer(anuncios, many=True)
+        return Response(serializer.data)
