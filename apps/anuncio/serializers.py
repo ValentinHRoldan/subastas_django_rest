@@ -110,5 +110,5 @@ class OfertaAnuncioSerializer(serializers.ModelSerializer):
             'precio_oferta',
             'usuario'
         ]
-        read_only_fields = ['usuario', 'anuncio']
+        read_only_fields = ['usuario', 'anuncio', 'es_ganador']
     

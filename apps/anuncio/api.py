@@ -32,7 +32,7 @@ class CategoriaViewSet(viewsets.ModelViewSet):
 class AnuncioViewSet(viewsets.ModelViewSet):
     queryset = Anuncio.objects.all()
     authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, DjangoModelPermissions]
     queryset = Anuncio.objects.all()
     serializer_class = AnuncioSerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
@@ -89,20 +89,40 @@ class AnuncioViewSet(viewsets.ModelViewSet):
         return Response({'tiempo_restante':{'dias': tiempo_restante.days, 'horas': horas, 'minutos': minutos}})
     
     @action(detail=True, methods=['post'])
+    # def ofertar(self, request, pk=None):
+
+    #     anuncio = self.get_object()
+    #     diccionario_of_anuncio = {"anuncio":anuncio, "precio_oferta" :request.data['precio_oferta'], "usuario": request.user}
+
+    #     oferta_anuncio = OfertaAnuncio(**diccionario_of_anuncio)
+
+    #     serializer = OfertaAnuncioSerializer(oferta_anuncio,data=request.data)
+
+    #     if serializer.is_valid():
+    #         oferta_anuncio.save()
+    #         return Response(serializer.data,status=status.HTTP_201_CREATED)
+        
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     def ofertar(self, request, pk=None):
-
         anuncio = self.get_object()
-        disionario = {"anuncio":anuncio,"fecha_oferta":request.data['fecha_oferta'], "precio_oferta" :request.data['precio_oferta'], "usuario": request.user}
-        print(disionario)
-        oferta_anuncio = OfertaAnuncio(**disionario)
+        
+        if anuncio.publicado_por == request.user:
+            return Response({
+                'Error': "No podés ofertar sobre tu propio anuncio"
+            })
+        
+        data = {
+            "precio_oferta": request.data.get('precio_oferta')
+        }
 
-        serializer = OfertaAnuncioSerializer(oferta_anuncio,data=request.data)
-
+        serializer = OfertaAnuncioSerializer(data=data)
         if serializer.is_valid():
-            oferta_anuncio.save()
-            return Response(serializer.data,status=status.HTTP_201_CREATED)
+            serializer.save(usuario=request.user, anuncio=anuncio)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
 
 class MisAnunciosAPIView(APIView):
     authentication_classes = [TokenAuthentication]
