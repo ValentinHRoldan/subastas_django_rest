@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Categoria, Anuncio
+from .models import Categoria, Anuncio, OfertaAnuncio
 from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 from datetime import timedelta
@@ -98,3 +98,17 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usuario
         fields = ['id', 'username', 'email', 'password', 'documento_identidad', 'domicilio']
+
+class OfertaAnuncioSerializer(serializers.ModelSerializer):
+    anuncio = AnuncioSerializer(many=False, read_only=True)
+
+    class Meta:
+        model = OfertaAnuncio
+        fields = [
+            'anuncio',
+            'fecha_oferta',
+            'precio_oferta',
+            'usuario'
+        ]
+        read_only_fields = ['usuario', 'anuncio']
+    
