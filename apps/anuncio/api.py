@@ -88,7 +88,7 @@ class AnuncioViewSet(viewsets.ModelViewSet):
         
         return Response({'tiempo_restante':{'dias': tiempo_restante.days, 'horas': horas, 'minutos': minutos}})
     
-    @action(detail=True, methods=['get'])
+    @action(detail=True, methods=['post'])
     def ofertar(self, request, pk=None):
 
         anuncio = self.get_object()
@@ -98,7 +98,7 @@ class AnuncioViewSet(viewsets.ModelViewSet):
         serializer = OfertaAnuncioSerializer(oferta_anuncio)
         
         
-        return Response(serializer.data)
+        return Response({"info": "oferta nueva creada!", "data":serializer.data})
 
 class MisAnunciosAPIView(APIView):
     authentication_classes = [TokenAuthentication]

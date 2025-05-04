@@ -22,6 +22,7 @@ from subastas_clase.router import router
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('apps.anuncio.urls', namespace='anuncios')),
+    path('', include('apps.usuario.urls', namespace='usuario')),
     path('api/', include(router.urls)),
     # path('api-auth/', include('rest_framework.urls')),
 ]
