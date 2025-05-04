@@ -2,8 +2,8 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets, filters
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .models import Categoria, Anuncio
-from .serializers import CategoriaSerializer, AnuncioSerializer
+from .models import Categoria, Anuncio, OfertaAnuncio
+from .serializers import CategoriaSerializer, AnuncioSerializer, OfertaAnuncioSerializer
 from apps.usuario.models import Usuario
 from rest_framework.decorators import action
 import datetime
@@ -47,20 +47,6 @@ class AnuncioViewSet(viewsets.ModelViewSet):
         usuario = self.request.user
         serializer.save(publicado_por=usuario)
 
-    @action(detail=True, methods=['get'])
-    def tiempo_restante(self, request, pk=None):
-        # Se obtiene la instancia de Usuario de acuerdo al ‘pk’ enviado en la url
-        anuncio = self.get_object()
-        serializer = AnuncioSerializer(anuncio)
-
-        fecha_actual = datetime.datetime.now().replace(tzinfo=None)
-        tiempo_restante = anuncio.fecha_fin.replace(tzinfo=None) - fecha_actual
-        total_segundos = abs(tiempo_restante.total_seconds())
-        horas = int((total_segundos % 86400) // 3600)
-        minutos = int((total_segundos % 3600) // 60)
-        
-        return Response({'tiempo_restante':{'dias': tiempo_restante.days, 'horas': horas, 'minutos': minutos}})
-
     def list(self, request, *args, **kwargs):
         version = request.query_params.get('version')
         if version == "1":
@@ -87,6 +73,32 @@ class AnuncioViewSet(viewsets.ModelViewSet):
             return Response({'detail': 'No tienes permiso para modificar este anuncio.'},
                             status=status.HTTP_403_FORBIDDEN)
         return super().partial_update(request, *args, **kwargs)
+    
+    @action(detail=True, methods=['get'])
+    def tiempo_restante(self, request, pk=None):
+        # Se obtiene la instancia de Usuario de acuerdo al ‘pk’ enviado en la url
+        anuncio = self.get_object()
+        serializer = AnuncioSerializer(anuncio)
+
+        fecha_actual = datetime.datetime.now().replace(tzinfo=None)
+        tiempo_restante = anuncio.fecha_fin.replace(tzinfo=None) - fecha_actual
+        total_segundos = abs(tiempo_restante.total_seconds())
+        horas = int((total_segundos % 86400) // 3600)
+        minutos = int((total_segundos % 3600) // 60)
+        
+        return Response({'tiempo_restante':{'dias': tiempo_restante.days, 'horas': horas, 'minutos': minutos}})
+    
+    @action(detail=True, methods=['get'])
+    def ofertar(self, request, pk=None):
+
+        anuncio = self.get_object()
+        disionario = {"anuncio":anuncio,"usuario": request.user, "precio_oferta" :request.data['precio_oferta']}
+        oferta_anuncio = OfertaAnuncio(**disionario)
+
+        serializer = OfertaAnuncioSerializer(oferta_anuncio)
+        
+        
+        return Response(serializer.data)
 
 class MisAnunciosAPIView(APIView):
     authentication_classes = [TokenAuthentication]
