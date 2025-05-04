@@ -32,7 +32,7 @@ class CategoriaViewSet(viewsets.ModelViewSet):
 class AnuncioViewSet(viewsets.ModelViewSet):
     queryset = Anuncio.objects.all()
     authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated, DjangoModelPermissions]
+    permission_classes = [IsAuthenticated]
     queryset = Anuncio.objects.all()
     serializer_class = AnuncioSerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
@@ -92,13 +92,17 @@ class AnuncioViewSet(viewsets.ModelViewSet):
     def ofertar(self, request, pk=None):
 
         anuncio = self.get_object()
-        disionario = {"anuncio":anuncio,"usuario": request.user, "precio_oferta" :request.data['precio_oferta']}
+        disionario = {"anuncio":anuncio,"fecha_oferta":request.data['fecha_oferta'], "precio_oferta" :request.data['precio_oferta'], "usuario": request.user}
+        print(disionario)
         oferta_anuncio = OfertaAnuncio(**disionario)
 
-        serializer = OfertaAnuncioSerializer(oferta_anuncio)
+        serializer = OfertaAnuncioSerializer(oferta_anuncio,data=request.data)
+
+        if serializer.is_valid():
+            oferta_anuncio.save()
+            return Response(serializer.data,status=status.HTTP_201_CREATED)
         
-        
-        return Response({"info": "oferta nueva creada!", "data":serializer.data})
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class MisAnunciosAPIView(APIView):
     authentication_classes = [TokenAuthentication]
