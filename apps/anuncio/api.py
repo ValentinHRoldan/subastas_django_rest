@@ -17,6 +17,7 @@ class CategoriaViewSet(viewsets.ModelViewSet):
     serializer_class = CategoriaSerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     filterset_class = CategoriaFilter
+    permission_classes = [DjangoModelPermissions]
     #para filtros
     filterset_fields = ['nombre','activa']
 
