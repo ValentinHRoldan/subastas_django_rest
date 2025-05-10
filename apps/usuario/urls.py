@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 
-from .views import perfil
+from .api.views import perfil
 
 app_name = 'usuario'
 urlpatterns = [

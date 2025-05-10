@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Categoria, Anuncio, OfertaAnuncio
+from ..models import Categoria, Anuncio, OfertaAnuncio
 from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 from datetime import timedelta

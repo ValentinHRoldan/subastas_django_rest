@@ -1,14 +1,12 @@
-from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets, filters
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .models import Categoria, Anuncio, OfertaAnuncio
+from ..models import Categoria, Anuncio
 from .serializers import CategoriaSerializer, AnuncioSerializer, OfertaAnuncioSerializer
-from apps.usuario.models import Usuario
 from rest_framework.decorators import action
 import datetime
 from django_filters.rest_framework import DjangoFilterBackend
-from .filters import CategoriaFilter
+from ..filters import CategoriaFilter
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions
 
@@ -125,11 +123,3 @@ class AnuncioViewSet(viewsets.ModelViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
-class MisAnunciosAPIView(APIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        anuncios = Anuncio.objects.filter(publicado_por=request.user)
-        serializer = AnuncioSerializer(anuncios, many=True)
-        return Response(serializer.data)

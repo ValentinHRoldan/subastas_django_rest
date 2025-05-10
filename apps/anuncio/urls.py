@@ -1,6 +1,6 @@
 from django.urls import path, re_path
-from .views import register, login
-from .api import MisAnunciosAPIView
+from .api.views import register, login
+from .api.views import MisAnunciosAPIView
 
 app_name = 'anuncio'
 urlpatterns = [
