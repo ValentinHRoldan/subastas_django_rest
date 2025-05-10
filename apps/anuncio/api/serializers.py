@@ -4,6 +4,7 @@ from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 from datetime import timedelta
 from apps.usuario.models import Usuario
+from ..utils import convertir_precio
 
 class CategoriaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -33,6 +34,7 @@ class AnuncioSerializer(serializers.ModelSerializer):
     categorias_ids = serializers.PrimaryKeyRelatedField(
         many=True, queryset=Categoria.objects.all(), write_only=True
     )
+    precio_usd = serializers.SerializerMethodField()
 
     class Meta:
         model = Anuncio
@@ -41,6 +43,7 @@ class AnuncioSerializer(serializers.ModelSerializer):
             'titulo',
             'descripcion',
             'precio_inicial',
+            'precio_usd',
             'imagen',
             'fecha_inicio',
             'fecha_fin',
@@ -57,6 +60,10 @@ class AnuncioSerializer(serializers.ModelSerializer):
         anuncio = Anuncio.objects.create(**validated_data)
         anuncio.categorias.set(categorias)
         return anuncio
+    
+    def get_precio_usd(self, obj):
+        #se hace el calculo de usd dinamicamente, es decir, no se crea una columna en la bd
+        return convertir_precio(obj.precio_inicial, moneda_destino='USD')
     
     # def generarError(self, mensaje):
     #     raise serializers.ValidationError({

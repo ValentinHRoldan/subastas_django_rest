@@ -144,3 +144,15 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+#----------------------------------------------------------------------------
+#configuracion env
+import environ
+
+# Inicializa django-environ
+env = environ.Env()
+environ.Env.read_env()  # Lee las variables del archivo .env
+
+# Usa la variable EXCHANGE_RATE_API_KEY desde el archivo .env
+EXCHANGE_RATE_API_KEY = env('EXCHANGE_RATE_API_KEY')
+#-------------------------------------------------------------------------------
