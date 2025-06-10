@@ -31,7 +31,7 @@ class CategoriaViewSet(viewsets.ModelViewSet):
 class AnuncioViewSet(viewsets.ModelViewSet):
     queryset = Anuncio.objects.all()
     authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated, DjangoModelPermissions]
+    permission_classes = [DjangoModelPermissions]
     queryset = Anuncio.objects.all()
     serializer_class = AnuncioSerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]

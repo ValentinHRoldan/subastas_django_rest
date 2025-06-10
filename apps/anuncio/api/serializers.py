@@ -65,14 +65,14 @@ class AnuncioSerializer(serializers.ModelSerializer):
         #se hace el calculo de usd dinamicamente, es decir, no se crea una columna en la bd
         return convertir_precio(obj.precio_inicial, moneda_destino='USD')
     
-    # def generarError(self, mensaje):
+    # def generarError(self, mensaje):|
     #     raise serializers.ValidationError({
     #         'info': mensaje
     #     })
 
     # def validate_fecha_inicio(self, value):
     #     if value < timezone.now():
-    #         self.generarError('la fecha no puede ser anterior a la actual')
+    #        self.generarError('la fecha no puede ser anterior a la actual')
     #     return value
     
     def errorMessage(self, info):
