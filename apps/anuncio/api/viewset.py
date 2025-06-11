@@ -95,7 +95,7 @@ class AnuncioViewSet(viewsets.ModelViewSet):
         if anuncio.publicado_por == request.user:
             return Response(
                 {'Error': "No podés ofertar sobre tu propio anuncio"},
-                status=status.HTTP_400_BAD_REQUEST  # 👈 esto es lo que faltaba
+                status=status.HTTP_400_BAD_REQUEST
             )
         
         data = {
