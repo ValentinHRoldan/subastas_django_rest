@@ -4,7 +4,7 @@ from apps.usuario.models import Usuario
 
 @pytest.mark.django_db
 def test_login_usuario(client, create_user, test_password):
-    user = create_user()
+    user = create_user
     url = reverse('usuario:auth_url_login')
 
     response = client.post(url, {
