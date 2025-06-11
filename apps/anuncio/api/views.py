@@ -9,6 +9,8 @@ from django.shortcuts import get_object_or_404
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
+from rest_framework.decorators import action
+from .serializers import CategoriaSerializer, AnuncioSerializer, OfertaAnuncioSerializer
 
 class MisAnunciosAPIView(APIView):
     authentication_classes = [TokenAuthentication]
@@ -18,3 +20,4 @@ class MisAnunciosAPIView(APIView):
         anuncios = Anuncio.objects.filter(publicado_por=request.user)
         serializer = AnuncioSerializer(anuncios, many=True)
         return Response(serializer.data)
+

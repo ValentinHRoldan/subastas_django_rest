@@ -8,7 +8,8 @@ import datetime
 from django_filters.rest_framework import DjangoFilterBackend
 from ..filters import CategoriaFilter
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions
+from rest_framework.permissions import DjangoModelPermissions
+from subastas_clase.permisos import DjangoModelPermissionsWithView
 
 class CategoriaViewSet(viewsets.ModelViewSet):
     queryset = Categoria.objects.all()
@@ -31,7 +32,7 @@ class CategoriaViewSet(viewsets.ModelViewSet):
 class AnuncioViewSet(viewsets.ModelViewSet):
     queryset = Anuncio.objects.all()
     authentication_classes = [TokenAuthentication]
-    permission_classes = [DjangoModelPermissions]
+    permission_classes = [DjangoModelPermissionsWithView]
     queryset = Anuncio.objects.all()
     serializer_class = AnuncioSerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
@@ -88,28 +89,14 @@ class AnuncioViewSet(viewsets.ModelViewSet):
         return Response({'tiempo_restante':{'dias': tiempo_restante.days, 'horas': horas, 'minutos': minutos}})
     
     @action(detail=True, methods=['post'])
-    # def ofertar(self, request, pk=None):
-
-    #     anuncio = self.get_object()
-    #     diccionario_of_anuncio = {"anuncio":anuncio, "precio_oferta" :request.data['precio_oferta'], "usuario": request.user}
-
-    #     oferta_anuncio = OfertaAnuncio(**diccionario_of_anuncio)
-
-    #     serializer = OfertaAnuncioSerializer(oferta_anuncio,data=request.data)
-
-    #     if serializer.is_valid():
-    #         oferta_anuncio.save()
-    #         return Response(serializer.data,status=status.HTTP_201_CREATED)
-        
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
     def ofertar(self, request, pk=None):
         anuncio = self.get_object()
         
         if anuncio.publicado_por == request.user:
-            return Response({
-                'Error': "No podés ofertar sobre tu propio anuncio"
-            })
+            return Response(
+                {'Error': "No podés ofertar sobre tu propio anuncio"},
+                status=status.HTTP_400_BAD_REQUEST  # 👈 esto es lo que faltaba
+            )
         
         data = {
             "precio_oferta": request.data.get('precio_oferta')
@@ -120,6 +107,7 @@ class AnuncioViewSet(viewsets.ModelViewSet):
             serializer.save(usuario=request.user, anuncio=anuncio)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
+
     
 

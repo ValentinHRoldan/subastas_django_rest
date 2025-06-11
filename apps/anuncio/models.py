@@ -49,6 +49,9 @@ class OfertaAnuncio(models.Model):
     usuario = models.ForeignKey('usuario.Usuario', on_delete=models.CASCADE, related_name='ofertas')
 
     def clean(self):
+    # El usuario no puede ofertar en su propio anuncio
+        if self.usuario == self.anuncio.publicado_por:
+            raise ValidationError("El creador del anuncio no puede ofertar en su propio anuncio.")
         # Validar si el precio de la oferta es mayor que el precio inicial del anuncio
         if self.precio_oferta <= self.anuncio.precio_inicial:
             raise ValidationError("La oferta debe ser mayor al precio inicial del artículo.")
