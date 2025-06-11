@@ -7,43 +7,43 @@ from apps.anuncio.models import Anuncio, Categoria
 from rest_framework import status
 
 
-# @pytest.mark.django_db
-# def test_creacion_anuncio(api_client, create_superuser, test_password):
-#     # Crear usuario y logueo
-#     user = create_superuser
-#     api_client.login(username=user.username, password=test_password)
+@pytest.mark.django_db
+def test_creacion_anuncio(api_client, create_superuser, test_password):
+    # Crear usuario y logueo
+    user = create_superuser
+    api_client.login(username=user.username, password=test_password)
 
-#     #token
-#     login_url = reverse('usuario:auth_url_login')
-#     response = api_client.post(login_url, {
-#         'username': user.username,
-#         'password': test_password
-#     }, format='json')
-#     assert response.status_code == 200
-#     token = response.data['token']
+    #token
+    login_url = reverse('usuario:auth_url_login')
+    response = api_client.post(login_url, {
+        'username': user.username,
+        'password': test_password
+    }, format='json')
+    assert response.status_code == 200
+    token = response.data['token']
 
-#     cat1 = Categoria.objects.create(nombre='Categoría 1')
-#     cat2 = Categoria.objects.create(nombre='Categoría 2')
+    cat1 = Categoria.objects.create(nombre='Categoría 1')
+    cat2 = Categoria.objects.create(nombre='Categoría 2')
 
-#     url = reverse('anuncio-list')  # nombre generado por el router
-#     data = {
-#         'titulo': 'Nuevo anuncio de prueba',
-#         'descripcion': 'Este es un anuncio de prueba para testing',
-#         'precio_inicial': 99.99,
-#         'fecha_inicio': timezone.now() + timezone.timedelta(minutes=10),
-#         'fecha_fin': timezone.now() + timezone.timedelta(days=10),
-#         'activo': True,
-#         'categorias_ids': [cat1.id, cat2.id],
-#     }
-#     api_client.credentials(HTTP_AUTHORIZATION='Token ' + token)
+    url = reverse('anuncio-list')  # nombre generado por el router
+    data = {
+        'titulo': 'Nuevo anuncio de prueba',
+        'descripcion': 'Este es un anuncio de prueba para testing',
+        'precio_inicial': 99.99,
+        'fecha_inicio': timezone.now() + timezone.timedelta(minutes=10),
+        'fecha_fin': timezone.now() + timezone.timedelta(days=10),
+        'activo': True,
+        'categorias_ids': [cat1.id, cat2.id],
+    }
+    api_client.credentials(HTTP_AUTHORIZATION='Token ' + token)
 
-#     response = api_client.post(url, data, format='json')
-#     assert response.status_code == 201
-#     response_data = response.json()
-#     assert response_data['titulo'] == data['titulo']
-#     assert response_data['descripcion'] == data['descripcion']
+    response = api_client.post(url, data, format='json')
+    assert response.status_code == 201
+    response_data = response.json()
+    assert response_data['titulo'] == data['titulo']
+    assert response_data['descripcion'] == data['descripcion']
 
-#     assert response_data['publicado_por'] == user.id
+    assert response_data['publicado_por'] == user.id
 
 @pytest.mark.django_db
 def test_creacion_anuncio_fallido(api_client, create_superuser, test_password):
@@ -87,7 +87,7 @@ def test_modificacion_fallida_datos_invalidos(api_client, create_superuser, test
 
     data = {
         'titulo': 'Anuncio modificado',
-        'precio_inicial': 'precio inválido' 
+        'precio_inicial': 'precio invalido' 
     }
 
     response = api_client.patch(url, data, format='json')
@@ -153,7 +153,7 @@ def test_oferta_fallida_por_ser_el_creador(api_client, create_user, crear_anunci
     # 3.2. Listado de anuncios aplicando filtros ✅
     # reverse('anuncio-detail', kwargs={'pk': anuncio.id})
     # 4.3. Creación fallida de una Oferta de Anuncio porque el usuario que intenta ofertar es el creador del mismo
-    # anuncio.
+    # anuncio. ✅
 # {
 # "username": "valentin",
 # "password": 11111
