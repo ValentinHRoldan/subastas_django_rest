@@ -1,16 +1,7 @@
 import pytest
 from apps.anuncio.models import Anuncio, Categoria
-from apps.usuario.models import Usuario
 from django.utils import timezone
 from datetime import timedelta
-
-@pytest.fixture
-def usuario():
-    return Usuario.objects.create_user(
-        username='testuser',
-        password='testpass',
-        documento_identidad='11111111'
-    )
 
 @pytest.fixture
 def categoria():
