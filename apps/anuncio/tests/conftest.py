@@ -23,3 +23,12 @@ def anuncio_basico(usuario, categoria):
     )
     anuncio.categorias.add(categoria)
     return anuncio
+
+@pytest.fixture
+def api_client():
+    from rest_framework.test import APIClient
+    return APIClient()
+
+
+
+

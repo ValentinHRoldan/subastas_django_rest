@@ -26,3 +26,16 @@ DATABASES = {
 }
 
 AUTH_USER_MODEL = 'usuario.Usuario'
+
+ROOT_URLCONF = 'subastas_clase.urls'
+
+import environ
+
+# Inicializa django-environ
+env = environ.Env()
+environ.Env.read_env()  # Lee las variables del archivo .env
+
+# Usa la variable EXCHANGE_RATE_API_KEY desde el archivo .env
+EXCHANGE_RATE_API_KEY = env('EXCHANGE_RATE_API_KEY')
+
+SECRET_KEY = 'django-insecure-ogj^q#mk!a9y20w9yh$&ch2xz($n_aprls6-czdvus0hgfbri2'

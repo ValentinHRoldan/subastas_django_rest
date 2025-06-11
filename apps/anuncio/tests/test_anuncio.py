@@ -1,8 +1,6 @@
 import pytest
-
-def test_list():
-    assert True
-
+from django.urls import reverse
+from apps.usuario.models import Usuario
 
 @pytest.mark.django_db
 def test_anuncio_basico_titulo(anuncio_basico):
