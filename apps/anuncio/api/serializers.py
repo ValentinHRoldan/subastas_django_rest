@@ -80,26 +80,33 @@ class AnuncioSerializer(serializers.ModelSerializer):
             'info': info
         }
 
-    def validate(self,data):
-        errors = {}
-        fecha_maxima = timezone.now() + timedelta(days=30) # fecha maxima establecida a 30 dias
-        duracion = data['fecha_fin'] - data['fecha_inicio']
+def validate(self, data):
+    errors = {}
+
+    fecha_inicio = data.get('fecha_inicio', getattr(self.instance, 'fecha_inicio', None))
+    fecha_fin = data.get('fecha_fin', getattr(self.instance, 'fecha_fin', None))
+
+    # Solo valida si ambos existen
+    if fecha_inicio and fecha_fin:
+        duracion = fecha_fin - fecha_inicio
         duracion_maxima = timedelta(days=30 * 2)
-        if data['fecha_inicio'] < timezone.now():
+        fecha_maxima = timezone.now() + timedelta(days=30)
+
+        if fecha_inicio < timezone.now():
             errors['fecha_inicio'] = self.errorMessage('La fecha no puede ser anterior a la actual.')
 
-        if data['fecha_fin'] < data['fecha_inicio']:
+        if fecha_fin < fecha_inicio:
             errors['fecha_fin'] = self.errorMessage('La fecha no puede ser anterior a la fecha de inicio')
 
-        if data['fecha_inicio'] > fecha_maxima:
-            errors['fecha_fin'] = self.errorMessage('La fecha de inicio no puede ser mayor a 30 dias desde ahora')
+        if fecha_inicio > fecha_maxima:
+            errors['fecha_inicio'] = self.errorMessage('La fecha de inicio no puede ser mayor a 30 dias desde ahora')
 
         if duracion > duracion_maxima:
             errors['Subasta'] = self.errorMessage('La duracion de la subasta no debe superar los 60 dias')
-            
-        if errors:
-            raise serializers.ValidationError(errors)
-        return data
+
+    if errors:
+        raise serializers.ValidationError(errors)
+    return data
     
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
